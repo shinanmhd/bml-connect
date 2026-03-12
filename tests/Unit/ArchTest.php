@@ -1,5 +1,10 @@
 <?php
 
+use Hadhiya\BmlConnect\BmlConnect;
+use Hadhiya\BmlConnect\Contracts\GatewayInterface;
+use Hadhiya\BmlConnect\Exceptions\BmlException;
+use Hadhiya\BmlConnect\Exceptions\SignatureMismatchException;
+
 it('will not use debugging functions')
     ->expect(['dd', 'dump', 'ray'])
     ->not->toBeUsed();
@@ -14,12 +19,11 @@ it('ensures all files are in the correct namespace')
     ->ignoring(['config_path', 'config', 'app', 'collect']);
 
 it('BmlConnect implements GatewayInterface', function () {
-    expect(\Hadhiya\BmlConnect\BmlConnect::class)
-        ->toImplement(\Hadhiya\BmlConnect\Contracts\GatewayInterface::class);
+    expect(BmlConnect::class)
+        ->toImplement(GatewayInterface::class);
 });
 
 it('SignatureMismatchException extends BmlException', function () {
-    expect(\Hadhiya\BmlConnect\Exceptions\SignatureMismatchException::class)
-        ->toExtend(\Hadhiya\BmlConnect\Exceptions\BmlException::class);
+    expect(SignatureMismatchException::class)
+        ->toExtend(BmlException::class);
 });
-

@@ -14,8 +14,7 @@ class TransactionResponse
         public ?string $url = null,
         public ?string $signature = null,
         public array $rawPayload = [],
-    ) {
-    }
+    ) {}
 
     public static function fromBml(array $data): self
     {

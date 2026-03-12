@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Http;
 class Client
 {
     private const API_VERSION = '2.0';
+
     private const APP_VERSION = 'hadhiya-bml-connect-laravel';
 
     /**
@@ -21,9 +22,7 @@ class Client
      */
     private const SIGN_METHOD = 'sha1';
 
-    public function __construct(private array $config)
-    {
-    }
+    public function __construct(private array $config) {}
 
     /**
      * Perform a POST to the BML Connect API.

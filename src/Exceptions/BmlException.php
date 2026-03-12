@@ -6,6 +6,4 @@ namespace Hadhiya\BmlConnect\Exceptions;
 
 use Exception;
 
-class BmlException extends Exception
-{
-}
+class BmlException extends Exception {}

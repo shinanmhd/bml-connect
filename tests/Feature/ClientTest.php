@@ -3,6 +3,8 @@
 use Hadhiya\BmlConnect\BmlConnect;
 use Hadhiya\BmlConnect\Data\CreateTransactionRequest;
 use Hadhiya\BmlConnect\Facades\BmlConnect as BmlConnectFacade;
+use Hadhiya\BmlConnect\Http\Client;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
 test('it uses the sandbox endpoint when mode is sandbox', function () {
@@ -50,11 +52,11 @@ test('the Authorization header sends the raw api key without a Bearer prefix', f
 });
 
 test('the SSL verify option is enforced via reflection', function () {
-    $client = new \Hadhiya\BmlConnect\Http\Client(config('bml-connect'));
+    $client = new Client(config('bml-connect'));
 
     $ref = new ReflectionMethod($client, 'newRequest');
     $ref->setAccessible(true);
-    /** @var \Illuminate\Http\Client\PendingRequest $pendingRequest */
+    /** @var PendingRequest $pendingRequest */
     $pendingRequest = $ref->invoke($client);
 
     // Read the internal $options property via reflection (no external packages needed)
