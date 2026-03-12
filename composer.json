@@ -1,46 +1,61 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "hadhiya/bml-connect",
+    "description": "A Laravel gateway adapter for Bank of Maldives (BML) Connect, built for payment platforms that support multiple providers. This package offers a clean, secure, and testable integration layer around the BML Connect API—handling transaction creation, retrieval, listing/reconciliation helpers, cancellation, request signing, environment (sandbox/production) configuration, and robust error handling—while remaining stateless and storage-agnostic so your payment portal retains full control over persistence, workflows, and gateway orchestration.",
     "keywords": [
-        ":vendor_name",
-        ":package_slug"
+        "Hadhiya",
+        "bml-connect"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/hadhiya/bml-connect",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Shinan",
+            "email": "shinaan.mv@gmail.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.4"
+        "php": "^8.4",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "guzzlehttp/guzzle": "^7.0"
     },
     "require-dev": {
-        :require_dev_testing,
-        :require_dev_codestyle,
+        "laravel/pint": "^1.0",
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.1",
         "spatie/ray": "^1.28"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src"
+            "Hadhiya\\BmlConnect\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "Hadhiya\\BmlConnect\\Tests\\": "tests"
         }
     },
     "scripts": {
-        :scripts_testing,
-        :scripts_codestyle
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            :plugins_testing,
+            "pestphp/pest-plugin": true,
             "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Hadhiya\\BmlConnect\\BmlConnectServiceProvider"
+            ],
+            "aliases": {
+                "BmlConnect": "Hadhiya\\BmlConnect\\Facades\\BmlConnect"
+            }
         }
     },
     "minimum-stability": "dev",
