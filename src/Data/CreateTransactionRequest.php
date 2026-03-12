@@ -32,12 +32,19 @@ class CreateTransactionRequest
 
     public function toArray(): array
     {
-        return array_filter([
-            'amount' => $this->amount,
-            'currency' => $this->currency,
-            'redirectUrl' => $this->redirectUrl,
-            'localId' => $this->localId,
-            'provider' => $this->provider,
-        ]);
+        // Use an explicit null check rather than bare array_filter().
+        // array_filter() without a callback strips ALL falsy values — a
+        // localId or provider of '0' would be silently dropped, which would
+        // cause BML to receive a request with a missing merchant reference.
+        return array_filter(
+            [
+                'amount' => $this->amount,
+                'currency' => $this->currency,
+                'redirectUrl' => $this->redirectUrl,
+                'localId' => $this->localId,
+                'provider' => $this->provider,
+            ],
+            fn ($value) => $value !== null,
+        );
     }
 }

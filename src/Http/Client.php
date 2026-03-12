@@ -50,6 +50,9 @@ class Client
      * Perform a GET against the BML Connect API.
      *
      * Read-only requests are safe to retry on transient network failures.
+     * We pass throw: false so that failed responses are returned to
+     * handleResponse() for conversion into our typed BmlException, rather
+     * than being surfaced as an untyped RequestException by the retry layer.
      */
     public function get(string $endpoint, array $query = []): array
     {
@@ -58,6 +61,7 @@ class Client
                 $this->config['retry']['times'] ?? 3,
                 $this->config['retry']['sleep'] ?? 100,
                 fn (\Exception $e) => ! ($e instanceof BmlException),
+                throw: false,
             )
             ->get($endpoint, $query);
 
@@ -101,6 +105,18 @@ class Client
             );
         }
 
-        return $response->json();
+        $data = $response->json();
+
+        // Response::json() returns null when the body is empty or non-JSON
+        // (e.g. a proxy returning an HTML error page with a 200 status).
+        // Propagate this as a clean BmlException rather than a TypeError.
+        if (! is_array($data)) {
+            throw new BmlException(
+                'BML API returned an unexpected non-JSON response.',
+                $response->status()
+            );
+        }
+
+        return $data;
     }
 }

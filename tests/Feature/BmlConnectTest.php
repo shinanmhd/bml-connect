@@ -150,3 +150,112 @@ test('it rejects a webhook with a missing amount field', function () {
 
     expect(BmlConnect::verifyWebhook($payload, $signature))->toBeFalse();
 });
+
+test('it rejects a webhook with a missing currency field', function () {
+    $signature = sha1('amount=1000&currency=MVR&apiKey=test-api-key');
+
+    $payload = ['amount' => 1000, 'status' => 'SUCCESS'];
+
+    expect(BmlConnect::verifyWebhook($payload, $signature))->toBeFalse();
+});
+
+test('it rejects a webhook with an empty signature', function () {
+    $payload = ['amount' => 1000, 'currency' => 'MVR', 'status' => 'SUCCESS'];
+
+    expect(BmlConnect::verifyWebhook($payload, ''))->toBeFalse();
+});
+
+test('createTransaction sends a POST with correct headers and body fields', function () {
+    Http::fake([
+        '*/transactions' => Http::response([
+            'id' => 'x', 'amount' => 500, 'currency' => 'MVR', 'status' => 'READY',
+        ], 200),
+    ]);
+
+    BmlConnect::createTransaction(new CreateTransactionRequest(amount: 500));
+
+    Http::assertSent(function ($request) {
+        return $request->method() === 'POST'
+            && $request->hasHeader('Authorization', 'test-api-key')
+            && $request->hasHeader('Accept', 'application/json')
+            && isset($request['signature'])
+            && isset($request['appId'])
+            && $request['signMethod'] === 'sha1'
+            && $request['apiVersion'] === '2.0';
+    });
+});
+
+test('createTransaction does not retry on failure', function () {
+    Http::fake(['*/transactions' => Http::response([], 500)]);
+
+    try {
+        BmlConnect::createTransaction(new CreateTransactionRequest(amount: 500));
+    } catch (BmlException) {
+    }
+
+    // Exactly one request — no auto-retry on POST (would cause duplicate charges)
+    Http::assertSentCount(1);
+});
+
+test('getTransaction sends a GET request', function () {
+    Http::fake([
+        '*/transactions/txn-1' => Http::response([
+            'id' => 'txn-1', 'amount' => 500, 'currency' => 'MVR', 'status' => 'SUCCESS',
+        ], 200),
+    ]);
+
+    BmlConnect::getTransaction('txn-1');
+
+    Http::assertSent(fn ($r) => $r->method() === 'GET');
+});
+
+test('getTransaction throws BmlException on 404', function () {
+    Http::fake(['*/transactions/missing' => Http::response([], 404)]);
+
+    expect(fn () => BmlConnect::getTransaction('missing'))
+        ->toThrow(BmlException::class);
+});
+
+test('BmlException code matches the HTTP status returned by BML', function () {
+    Http::fake(['*/transactions' => Http::response([], 422)]);
+
+    try {
+        BmlConnect::createTransaction(new CreateTransactionRequest(amount: 500));
+    } catch (BmlException $e) {
+        expect($e->getCode())->toBe(422);
+    }
+});
+
+test('listTransactions maps a flat array response without a data wrapper', function () {
+    Http::fake([
+        '*/transactions' => Http::response([
+            ['id' => 'flat-1', 'amount' => 100, 'currency' => 'MVR', 'status' => 'SUCCESS'],
+            ['id' => 'flat-2', 'amount' => 200, 'currency' => 'MVR', 'status' => 'FAIL'],
+        ], 200),
+    ]);
+
+    $transactions = BmlConnect::listTransactions();
+
+    expect($transactions)->toHaveCount(2)
+        ->and($transactions->first()->id)->toBe('flat-1');
+});
+
+test('listTransactions forwards filters as query parameters', function () {
+    Http::fake(['*/transactions*' => Http::response(['data' => []], 200)]);
+
+    BmlConnect::listTransactions(['status' => 'SUCCESS', 'page' => 2]);
+
+    Http::assertSent(
+        fn ($r) => str_contains($r->url(), 'status=SUCCESS')
+            && str_contains($r->url(), 'page=2')
+    );
+});
+
+test('createTransaction throws BmlException when BML returns non-JSON 200', function () {
+    Http::fake([
+        '*/transactions' => Http::response('OK', 200),
+    ]);
+
+    expect(fn () => BmlConnect::createTransaction(new CreateTransactionRequest(amount: 500)))
+        ->toThrow(BmlException::class);
+});

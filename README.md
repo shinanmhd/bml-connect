@@ -616,15 +616,193 @@ Returned by `createTransaction()` and `getTransaction()`.
 
 ## Testing
 
-This package uses [Pest PHP](https://pestphp.com). Run the suite:
+This package uses [Pest PHP](https://pestphp.com). Run the full suite:
 
 ```bash
 composer test
 ```
 
+The suite currently contains **96 tests** across **145 assertions**, covering every public method, every code path, every exception, every validation rule, and every security-critical behaviour.
+
+---
+
+### Test Suite Overview
+
+```mermaid
+pie title 96 Tests by Category
+    "PaymentStatus" : 19
+    "CreateTransactionRequest" : 17
+    "TransactionResponse" : 11
+    "BmlConnect (Feature)" : 19
+    "Signer" : 9
+    "HTTP Client" : 4
+    "Exceptions" : 6
+    "Integration / Service Provider" : 4
+    "Architecture" : 5
+    "RequestTest" : 4
+```
+
+---
+
+### Unit Tests
+
+#### `ArchTest` — Code Quality & Architecture
+
+| Test | What It Verifies |
+|---|---|
+| will not use debugging functions | `dd`, `dump`, `ray` are absent from all source files |
+| uses strict types | Every class declares `strict_types=1` |
+| ensures all files are in the correct namespace | Source only depends on its own namespace, Illuminate, GuzzleHttp, Psr |
+| BmlConnect implements GatewayInterface | `BmlConnect` satisfies the contract |
+| SignatureMismatchException extends BmlException | Inheritance chain is correct |
+
+---
+
+#### `CreateTransactionRequestTest` — Input Validation & Serialisation
+
+| Test | What It Verifies |
+|---|---|
+| it creates a valid request with all fields | All five constructor parameters are stored correctly |
+| it serialises correctly to array | `toArray()` includes all non-null fields with correct keys |
+| it omits null optional fields from array | `null` optional fields are excluded from `toArray()` output |
+| it throws for zero amount | `amount: 0` throws `InvalidArgumentException` |
+| it throws for negative amount | `amount: -100` throws `InvalidArgumentException` |
+| it throws for empty currency | `currency: ''` throws `InvalidArgumentException` |
+| it throws for whitespace-only currency | `currency: '   '` throws `InvalidArgumentException` |
+| it throws for an invalid redirect url | `redirectUrl: 'not-a-url'` throws `InvalidArgumentException` |
+| it accepts a valid https redirect url | A well-formed HTTPS URL is accepted without throwing |
+| it accepts a null redirect url | `redirectUrl: null` is accepted (field is optional) |
+| toArray does not strip a localId of zero-string | `localId: '0'` is preserved — guards against `array_filter` dropping falsy values |
+| toArray does not strip a provider of zero-string | `provider: '0'` is preserved — same regression guard |
+
+---
+
+#### `ExceptionTest` — Exception Classes
+
+| Test | What It Verifies |
+|---|---|
+| it can be instantiated | `SignatureMismatchException` can be constructed directly |
+| SignatureMismatchException::make() produces the canonical message | Static factory returns exact expected message string |
+| SignatureMismatchException is an instance of BmlException | Exception hierarchy is correct for callers using `catch (BmlException)` |
+| BmlException exposes the HTTP status as its code | `getCode()` returns `401` when constructed with code `401` |
+| BmlException with a 500 code reports correctly | `getCode()` returns `500` when constructed with code `500` |
+| BmlException message does not expose sensitive data | Message contains only the status code, no API response body |
+
+---
+
+#### `PaymentStatusTest` — Enum Mapping & Helper Methods
+
+**Status mapping (BML raw → package enum):**
+
+| Test | BML Raw → `PaymentStatus` |
+|---|---|
+| maps READY | `READY` → `INITIATED` |
+| maps PENDING | `PENDING` → `PENDING` |
+| maps SUCCESS | `SUCCESS` → `SUCCEEDED` |
+| maps FAIL | `FAIL` → `FAILED` |
+| maps CANCELLED | `CANCELLED` → `CANCELLED` |
+| maps EXPIRED | `EXPIRED` → `EXPIRED` |
+| maps unknown value | Any unknown string → `FAILED` (safe fallback) |
+
+**Helper method tests:**
+
+| Test | What It Verifies |
+|---|---|
+| isSucceeded returns true only for SUCCEEDED | Other statuses return `false` |
+| isFailed returns true only for FAILED | Other statuses return `false` |
+| isPending returns true only for PENDING | Other statuses return `false` |
+| isTerminal returns true for final states | `SUCCEEDED`, `FAILED`, `CANCELLED`, `EXPIRED` → `true`; `INITIATED`, `PENDING` → `false` |
+| requiresPolling returns true for in-flight states | `INITIATED`, `PENDING` → `true`; all terminal states → `false` |
+
+---
+
+#### `SignerTest` — Request Signing & Webhook Verification
+
+| Test | What It Verifies |
+|---|---|
+| it can generate a signature | `sha1("amount=…&currency=…&apiKey=…")` formula is correct |
+| it can verify a signature | Valid signature+payload pair returns `true` |
+| it fails verification for invalid amount | Tampered amount returns `false` |
+| it returns false when the currency field is missing | Missing `currency` key returns `false` |
+| it returns false when both amount and currency are missing | Completely missing fields return `false` |
+| it returns false for an empty signature string | Empty `""` signature is rejected |
+| it accepts a string amount via integer cast when verifying | `'1000'` (string) is cast and verifies correctly against `1000` (int) signature |
+| different api keys produce different signatures | Two different API keys never produce the same hash |
+| signatures are case-sensitive — uppercase signature fails verification | `strtoupper()` of a valid signature is rejected |
+
+---
+
+#### `TransactionResponseTest` — Response Mapping
+
+| Test | What It Verifies |
+|---|---|
+| it maps all fields from a full bml response | `id`, `amount`, `currency`, `status`, `url`, `signature` all map correctly |
+| it falls back to reference key when id is absent | Uses `reference` field if `id` is missing from payload |
+| it returns empty string id when neither id nor reference is present | Graceful handling of missing identity fields |
+| it defaults amount to 0 when missing | No panic when `amount` key absent |
+| it defaults currency to MVR when missing | Sensible default when `currency` key absent |
+| it casts a string amount to integer | `"750"` (string from JSON) → `750` (int) |
+| it preserves the raw payload in full | `rawPayload` contains the complete, unmodified API response |
+| it handles an entirely empty payload without throwing | Empty array `[]` does not throw — all defaults apply |
+| id takes precedence over reference when both are present | `id` key wins over `reference` key |
+| url defaults to null when absent | Missing `url` key → `null`, not an error |
+| signature defaults to null when absent | Missing `signature` key → `null`, not an error |
+
+---
+
+### Feature Tests
+
+#### `BmlConnectTest` — Full Gateway Integration
+
+| Test | What It Verifies |
+|---|---|
+| it can create a transaction | Full create-transaction flow returns a mapped `TransactionResponse` |
+| it can retrieve a transaction | `getTransaction()` fetches and maps a single transaction |
+| it can list transactions | `listTransactions()` returns a `Collection` of `TransactionResponse` objects |
+| it throws BmlException when the api returns an error | HTTP 4xx/5xx responses throw `BmlException` |
+| it does not expose response body in exception messages | Exception message contains HTTP code only — no API payload in logs |
+| it can verify a valid webhook signature | Correct signature+payload pair returns `true` |
+| it rejects a webhook with a tampered amount | Modified `amount` in payload returns `false` |
+| it rejects a webhook with a tampered currency | Modified `currency` in payload returns `false` |
+| it rejects a webhook with a missing amount field | Missing `amount` key returns `false` |
+| it rejects a webhook with a missing currency field | Missing `currency` key returns `false` |
+| it rejects a webhook with an empty signature | Empty `""` signature string returns `false` |
+| createTransaction sends a POST with correct headers and body fields | Method is `POST`, `Authorization` is raw API key, `signature`, `appId`, `signMethod`, `apiVersion` are all present |
+| createTransaction does not retry on failure | Exactly 1 request sent on failure — no duplicate-charge risk |
+| getTransaction sends a GET request | HTTP method is `GET` |
+| getTransaction throws BmlException on 404 | 404 response surfaces as typed `BmlException`, not `RequestException` |
+| BmlException code matches the HTTP status returned by BML | `$e->getCode()` equals the HTTP response status (e.g. `422`) |
+| listTransactions maps a flat array response without a data wrapper | Handles both `{"data": [...]}` and `[...]` response formats |
+| listTransactions forwards filters as query parameters | `status=SUCCESS&page=2` appears in the request URL |
+| createTransaction throws BmlException when BML returns non-JSON 200 | Non-JSON body on a 200 response throws `BmlException` (not `TypeError`) |
+
+---
+
+#### `ClientTest` — HTTP Client Security & Routing
+
+| Test | What It Verifies |
+|---|---|
+| it uses the sandbox endpoint when mode is sandbox | Requests go to `api.uat.merchants.bankofmaldives.com.mv` |
+| it uses the production endpoint when mode is production | Requests go to `api.merchants.bankofmaldives.com.mv` (no `uat`) |
+| the Authorization header sends the raw api key without a Bearer prefix | Header is the raw key value — not `Bearer <key>` — as required by BML |
+| the SSL verify option is enforced via reflection | `options['verify'] === true` is confirmed via `ReflectionProperty` — cannot be disabled |
+
+---
+
+#### `IntegrationTest` — Laravel Service Provider
+
+| Test | What It Verifies |
+|---|---|
+| it registers the service provider and merges config | Default config values are present after boot |
+| it binds BmlConnect as a singleton | The same instance is resolved every time from the container |
+| it can resolve via facade | `BmlConnect::` facade accessor resolves to the correct class |
+| it registers the alias | `app('bml-connect')` resolves the same class as `BmlConnect::class` |
+
+---
+
 ### Writing Tests for Your Integration
 
-Use Laravel's `Http::fake()` to mock BML API responses — no real API calls needed.
+Use Laravel's `Http::fake()` to mock BML API responses in your own tests — no real API calls needed.
 
 ```php
 use Hadhiya\BmlConnect\Data\CreateTransactionRequest;

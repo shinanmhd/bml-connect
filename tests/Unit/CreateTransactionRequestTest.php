@@ -89,3 +89,16 @@ test('it accepts a null redirect url', function () {
 
     expect($request->redirectUrl)->toBeNull();
 });
+
+test('toArray does not strip a localId of zero-string', function () {
+    // Regression guard: bare array_filter() would silently drop '0' as falsy
+    $request = new CreateTransactionRequest(amount: 100, currency: 'MVR', localId: '0');
+
+    expect($request->toArray())->toHaveKey('localId', '0');
+});
+
+test('toArray does not strip a provider of zero-string', function () {
+    $request = new CreateTransactionRequest(amount: 100, currency: 'MVR', provider: '0');
+
+    expect($request->toArray())->toHaveKey('provider', '0');
+});
