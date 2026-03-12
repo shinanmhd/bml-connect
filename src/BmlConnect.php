@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 class BmlConnect implements GatewayInterface
 {
     protected Client $client;
+
     protected Signer $signer;
 
     public function __construct(protected array $config)

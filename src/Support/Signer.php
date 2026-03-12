@@ -6,9 +6,7 @@ namespace Hadhiya\BmlConnect\Support;
 
 class Signer
 {
-    public function __construct(private string $apiKey)
-    {
-    }
+    public function __construct(private string $apiKey) {}
 
     /**
      * Generate a signature for the given transaction details.

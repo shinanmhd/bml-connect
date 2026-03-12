@@ -48,22 +48,22 @@ test('it omits null optional fields from array', function () {
 
 test('it throws for zero amount', function () {
     expect(fn () => new CreateTransactionRequest(amount: 0))
-        ->toThrow(\InvalidArgumentException::class, 'positive integer');
+        ->toThrow(InvalidArgumentException::class, 'positive integer');
 });
 
 test('it throws for negative amount', function () {
     expect(fn () => new CreateTransactionRequest(amount: -100))
-        ->toThrow(\InvalidArgumentException::class, 'positive integer');
+        ->toThrow(InvalidArgumentException::class, 'positive integer');
 });
 
 test('it throws for empty currency', function () {
     expect(fn () => new CreateTransactionRequest(amount: 100, currency: ''))
-        ->toThrow(\InvalidArgumentException::class, 'Currency');
+        ->toThrow(InvalidArgumentException::class, 'Currency');
 });
 
 test('it throws for whitespace-only currency', function () {
     expect(fn () => new CreateTransactionRequest(amount: 100, currency: '   '))
-        ->toThrow(\InvalidArgumentException::class, 'Currency');
+        ->toThrow(InvalidArgumentException::class, 'Currency');
 });
 
 test('it throws for an invalid redirect url', function () {
@@ -71,7 +71,7 @@ test('it throws for an invalid redirect url', function () {
         amount: 100,
         currency: 'MVR',
         redirectUrl: 'not-a-valid-url'
-    ))->toThrow(\InvalidArgumentException::class, 'valid URL');
+    ))->toThrow(InvalidArgumentException::class, 'valid URL');
 });
 
 test('it accepts a valid https redirect url', function () {

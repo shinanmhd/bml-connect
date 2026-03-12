@@ -73,4 +73,3 @@ test('signatures are case-sensitive — uppercase signature fails verification',
 
     expect($signer->verify(['amount' => 1000, 'currency' => 'MVR'], $upperSig))->toBeFalse();
 });
-

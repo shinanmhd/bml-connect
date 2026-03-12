@@ -40,4 +40,3 @@ test('BmlException message does not expose sensitive data', function () {
         ->and($e->getMessage())->not->toContain('apiKey')
         ->and($e->getMessage())->not->toContain('secret');
 });
-
