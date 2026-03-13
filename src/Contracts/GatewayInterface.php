@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Hadhiya\BmlConnect\Contracts;
+namespace IgniteLabs\BmlConnect\Contracts;
 
-use Hadhiya\BmlConnect\Data\CreateTransactionRequest;
-use Hadhiya\BmlConnect\Data\TransactionResponse;
+use IgniteLabs\BmlConnect\Data\CreateTransactionRequest;
+use IgniteLabs\BmlConnect\Data\TransactionResponse;
 use Illuminate\Support\Collection;
 
 interface GatewayInterface

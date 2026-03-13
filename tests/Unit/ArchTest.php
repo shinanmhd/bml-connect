@@ -1,21 +1,21 @@
 <?php
 
-use Hadhiya\BmlConnect\BmlConnect;
-use Hadhiya\BmlConnect\Contracts\GatewayInterface;
-use Hadhiya\BmlConnect\Exceptions\BmlException;
-use Hadhiya\BmlConnect\Exceptions\SignatureMismatchException;
+use IgniteLabs\BmlConnect\BmlConnect;
+use IgniteLabs\BmlConnect\Contracts\GatewayInterface;
+use IgniteLabs\BmlConnect\Exceptions\BmlException;
+use IgniteLabs\BmlConnect\Exceptions\SignatureMismatchException;
 
 it('will not use debugging functions')
     ->expect(['dd', 'dump', 'ray'])
     ->not->toBeUsed();
 
 it('uses strict types')
-    ->expect('Hadhiya\BmlConnect')
+    ->expect('IgniteLabs\BmlConnect')
     ->toUseStrictTypes();
 
 it('ensures all files are in the correct namespace')
-    ->expect('Hadhiya\BmlConnect')
-    ->toOnlyUse(['Hadhiya\BmlConnect', 'Illuminate', 'GuzzleHttp', 'Psr'])
+    ->expect('IgniteLabs\BmlConnect')
+    ->toOnlyUse(['IgniteLabs\BmlConnect', 'Illuminate', 'GuzzleHttp', 'Psr'])
     ->ignoring(['config_path', 'config', 'app', 'collect']);
 
 it('BmlConnect implements GatewayInterface', function () {

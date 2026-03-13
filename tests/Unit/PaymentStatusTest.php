@@ -1,6 +1,6 @@
 <?php
 
-use Hadhiya\BmlConnect\Data\PaymentStatus;
+use IgniteLabs\BmlConnect\Data\PaymentStatus;
 
 test('it maps bml statuses correctly', function ($bmlStatus, $expected) {
     expect(PaymentStatus::fromBml($bmlStatus))->toBe($expected);

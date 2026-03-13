@@ -1,6 +1,6 @@
 <?php
 
-use Hadhiya\BmlConnect\Support\Signer;
+use IgniteLabs\BmlConnect\Support\Signer;
 
 test('it can generate a signature', function () {
     $signer = new Signer('test-api-key');

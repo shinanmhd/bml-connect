@@ -1,6 +1,6 @@
 <?php
 
-use Hadhiya\BmlConnect\Data\CreateTransactionRequest;
+use IgniteLabs\BmlConnect\Data\CreateTransactionRequest;
 
 test('it creates a valid request with all fields', function () {
     $request = new CreateTransactionRequest(

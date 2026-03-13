@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Hadhiya\BmlConnect\Http;
+namespace IgniteLabs\BmlConnect\Http;
 
-use Hadhiya\BmlConnect\Exceptions\BmlException;
+use IgniteLabs\BmlConnect\Exceptions\BmlException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;

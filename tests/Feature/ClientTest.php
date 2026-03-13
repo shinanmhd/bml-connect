@@ -1,9 +1,9 @@
 <?php
 
-use Hadhiya\BmlConnect\BmlConnect;
-use Hadhiya\BmlConnect\Data\CreateTransactionRequest;
-use Hadhiya\BmlConnect\Facades\BmlConnect as BmlConnectFacade;
-use Hadhiya\BmlConnect\Http\Client;
+use IgniteLabs\BmlConnect\BmlConnect;
+use IgniteLabs\BmlConnect\Data\CreateTransactionRequest;
+use IgniteLabs\BmlConnect\Facades\BmlConnect as BmlConnectFacade;
+use IgniteLabs\BmlConnect\Http\Client;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 

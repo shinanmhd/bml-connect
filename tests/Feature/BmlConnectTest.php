@@ -1,9 +1,9 @@
 <?php
 
-use Hadhiya\BmlConnect\Data\CreateTransactionRequest;
-use Hadhiya\BmlConnect\Data\PaymentStatus;
-use Hadhiya\BmlConnect\Exceptions\BmlException;
-use Hadhiya\BmlConnect\Facades\BmlConnect;
+use IgniteLabs\BmlConnect\Data\CreateTransactionRequest;
+use IgniteLabs\BmlConnect\Data\PaymentStatus;
+use IgniteLabs\BmlConnect\Exceptions\BmlException;
+use IgniteLabs\BmlConnect\Facades\BmlConnect;
 use Illuminate\Support\Facades\Http;
 
 test('it can create a transaction', function () {

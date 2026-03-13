@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hadhiya\BmlConnect;
+namespace IgniteLabs\BmlConnect;
 
 use Illuminate\Support\ServiceProvider;
 

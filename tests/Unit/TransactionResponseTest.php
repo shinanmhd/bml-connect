@@ -1,7 +1,7 @@
 <?php
 
-use Hadhiya\BmlConnect\Data\PaymentStatus;
-use Hadhiya\BmlConnect\Data\TransactionResponse;
+use IgniteLabs\BmlConnect\Data\PaymentStatus;
+use IgniteLabs\BmlConnect\Data\TransactionResponse;
 
 test('it maps all fields from a full bml response', function () {
     $response = TransactionResponse::fromBml([

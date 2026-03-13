@@ -1,11 +1,11 @@
 {
-    "name": "hadhiya/bml-connect",
+    "name": "ignite/bml-connect",
     "description": "A Laravel gateway adapter for Bank of Maldives (BML) Connect, built for payment platforms that support multiple providers. This package offers a clean, secure, and testable integration layer around the BML Connect API—handling transaction creation, retrieval, listing/reconciliation helpers, cancellation, request signing, environment (sandbox/production) configuration, and robust error handling—while remaining stateless and storage-agnostic so your payment portal retains full control over persistence, workflows, and gateway orchestration.",
     "keywords": [
-        "Hadhiya",
+        "IgniteLabs",
         "bml-connect"
     ],
-    "homepage": "https://github.com/hadhiya/bml-connect",
+    "homepage": "https://github.com/ignitelabs-mv/bml-connect",
     "license": "MIT",
     "authors": [
         {
@@ -28,12 +28,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Hadhiya\\BmlConnect\\": "src"
+            "IgniteLabs\\BmlConnect\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Hadhiya\\BmlConnect\\Tests\\": "tests"
+            "IgniteLabs\\BmlConnect\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -51,10 +51,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Hadhiya\\BmlConnect\\BmlConnectServiceProvider"
+                "IgniteLabs\\BmlConnect\\BmlConnectServiceProvider"
             ],
             "aliases": {
-                "BmlConnect": "Hadhiya\\BmlConnect\\Facades\\BmlConnect"
+                "BmlConnect": "IgniteLabs\\BmlConnect\\Facades\\BmlConnect"
             }
         }
     },

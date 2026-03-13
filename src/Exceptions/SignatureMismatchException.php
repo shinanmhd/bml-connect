@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hadhiya\BmlConnect\Exceptions;
+namespace IgniteLabs\BmlConnect\Exceptions;
 
 /**
  * Thrown when a webhook signature does not match the expected value.

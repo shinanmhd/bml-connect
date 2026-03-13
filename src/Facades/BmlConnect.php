@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Hadhiya\BmlConnect\Facades;
+namespace IgniteLabs\BmlConnect\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Hadhiya\BmlConnect\BmlConnect
+ * @see \IgniteLabs\BmlConnect\BmlConnect
  */
 class BmlConnect extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \Hadhiya\BmlConnect\BmlConnect::class;
+        return \IgniteLabs\BmlConnect\BmlConnect::class;
     }
 }

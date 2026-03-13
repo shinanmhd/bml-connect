@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Hadhiya\BmlConnect;
+namespace IgniteLabs\BmlConnect;
 
-use Hadhiya\BmlConnect\Contracts\GatewayInterface;
-use Hadhiya\BmlConnect\Data\CreateTransactionRequest;
-use Hadhiya\BmlConnect\Data\TransactionResponse;
-use Hadhiya\BmlConnect\Http\Client;
-use Hadhiya\BmlConnect\Support\Signer;
+use IgniteLabs\BmlConnect\Contracts\GatewayInterface;
+use IgniteLabs\BmlConnect\Data\CreateTransactionRequest;
+use IgniteLabs\BmlConnect\Data\TransactionResponse;
+use IgniteLabs\BmlConnect\Http\Client;
+use IgniteLabs\BmlConnect\Support\Signer;
 use Illuminate\Support\Collection;
 
 class BmlConnect implements GatewayInterface

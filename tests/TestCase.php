@@ -1,8 +1,8 @@
 <?php
 
-namespace Hadhiya\BmlConnect\Tests;
+namespace IgniteLabs\BmlConnect\Tests;
 
-use Hadhiya\BmlConnect\BmlConnectServiceProvider;
+use IgniteLabs\BmlConnect\BmlConnectServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra

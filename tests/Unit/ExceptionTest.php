@@ -1,7 +1,7 @@
 <?php
 
-use Hadhiya\BmlConnect\Exceptions\BmlException;
-use Hadhiya\BmlConnect\Exceptions\SignatureMismatchException;
+use IgniteLabs\BmlConnect\Exceptions\BmlException;
+use IgniteLabs\BmlConnect\Exceptions\SignatureMismatchException;
 
 test('it can be instantiated', function () {
     $exception = new SignatureMismatchException('Invalid signature');

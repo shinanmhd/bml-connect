@@ -1,5 +1,5 @@
 <?php
 
-use Hadhiya\BmlConnect\Tests\TestCase;
+use IgniteLabs\BmlConnect\Tests\TestCase;
 
 uses(TestCase::class)->in('Feature');

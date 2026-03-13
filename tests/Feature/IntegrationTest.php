@@ -1,7 +1,7 @@
 <?php
 
-use Hadhiya\BmlConnect\BmlConnect;
-use Hadhiya\BmlConnect\Facades\BmlConnect as BmlConnectFacade;
+use IgniteLabs\BmlConnect\BmlConnect;
+use IgniteLabs\BmlConnect\Facades\BmlConnect as BmlConnectFacade;
 
 test('it registers the service provider and merges config', function () {
     expect(config('bml-connect'))->not->toBeNull()

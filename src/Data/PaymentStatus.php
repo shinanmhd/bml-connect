@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hadhiya\BmlConnect\Data;
+namespace IgniteLabs\BmlConnect\Data;
 
 enum PaymentStatus: string
 {

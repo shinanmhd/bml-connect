@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hadhiya\BmlConnect\Exceptions;
+namespace IgniteLabs\BmlConnect\Exceptions;
 
 use Exception;
 

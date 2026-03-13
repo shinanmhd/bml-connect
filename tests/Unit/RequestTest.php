@@ -1,6 +1,6 @@
 <?php
 
-use Hadhiya\BmlConnect\Data\CreateTransactionRequest;
+use IgniteLabs\BmlConnect\Data\CreateTransactionRequest;
 
 test('it validates the transaction amount', function () {
     expect(fn () => new CreateTransactionRequest(amount: 0))
